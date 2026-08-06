@@ -16,7 +16,7 @@ io.on('connection', (socket) => {
     io.emit('message', {
         user: "Teste",
         text: "Message",
-        image: ""
+        image: "aaa"
     } satisfies Message)
 
     socket.on("message", (msg: Message) => {

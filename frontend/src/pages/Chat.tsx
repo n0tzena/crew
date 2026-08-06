@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { socket } from '../socket';
 import type { Message } from "../../../shared/types";
+import { useUser } from '../context/UserContext';
 
 import './Chat.css';
 
@@ -11,8 +12,7 @@ export default function Chat()
 
     const bottomRef = useRef<HTMLDivElement>(null);
 
-    const username = localStorage.getItem("username");
-    const avatar = localStorage.getItem("avatar");
+    const { user } = useUser(); 
 
     useEffect(() => {
         socket.on("message", (msg: Message) => {
@@ -29,6 +29,14 @@ export default function Chat()
     }, [])
 
     useEffect(() => {
+        console.log("CHAT MONTADO");
+
+        return () => {
+            console.log("CHAT DESMONTADO");
+        };
+    }, []);
+
+    useEffect(() => {
         bottomRef.current?.scrollIntoView()
     }, [messages])
 
@@ -37,9 +45,9 @@ export default function Chat()
         e.preventDefault();
 
         socket.emit("message", {
-            user: username,
+            user: user.username,
             text: inputText,
-            image: ""
+            image: user.avatar
         } satisfies Message);
 
         setInputText("");
@@ -48,11 +56,10 @@ export default function Chat()
     return(
         <div className='chat-container'>
             <div className='chat'>
-                <h1>crew</h1>
                 {
                     messages.map((msg, index) => (
                         <div className='message' key={index}>
-                            <img src={avatar}></img>
+                            <img src={msg.image}></img>
                             <div className='messageText'>
                                 <strong>{msg.user}</strong>
                                 <p>{msg.text}</p>                                

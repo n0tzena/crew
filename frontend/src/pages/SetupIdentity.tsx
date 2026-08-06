@@ -1,6 +1,7 @@
 import './SetupIdentity.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router';
+import { useUser } from '../context/UserContext';
 import defaultUser from '../assets/defaultuser.jpg'
 
 export default function SetupIdentity()
@@ -10,6 +11,7 @@ export default function SetupIdentity()
 
     const [pfp, setPfp] = useState(defaultUser);
     const [username, setUsername] = useState("");
+    const { setUser } = useUser();
 
     const fileToBase64 = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -36,9 +38,13 @@ export default function SetupIdentity()
         e.preventDefault();
         if(username == "") return;
 
-        console.log("teste")
-        localStorage.setItem("username", username);
-        localStorage.setItem("avatar", pfp);
+        const newUser = {
+            username: username,
+            avatar: pfp
+        }
+
+        localStorage.setItem("user", JSON.stringify(newUser));
+        setUser(newUser);
 
         navigate("/chat");
     }
